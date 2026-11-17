@@ -1,0 +1,49 @@
+Design and develop a premium, modern, elegant Bengali news portal named **খবরনামা (Khobornama)**.
+
+BRAND IDENTITY:
+- Brand Name: খবরনামা
+- English Name: Khobornama
+- Industry: Bengali News & Media
+- Personality: Premium, Minimal, Trustworthy, Editorial, Elegant.
+
+OFFICIAL BRAND COLORS:
+- Primary: #202020
+- Background: #E4E1DC
+- Secondary Background: #F8F7F4
+- Accent: #34483C
+
+LOGO:
+Use the official Khobornama logo:
+https://i.imgur.com/Xkp2QhW.png
+
+TYPOGRAPHY:
+- Bengali: Hind Siliguri
+- English: Inter
+
+DESIGN DIRECTION:
+Create a professional newspaper-inspired interface with clean layouts, excellent typography, balanced whitespace, subtle borders, elegant news cards, and strong visual hierarchy.
+
+Use:
+- Dark charcoal for text and footer.
+- Warm off-white for content surfaces.
+- Soft warm grey for page backgrounds.
+- Deep Islamic green for accents, buttons, active navigation, and highlights.
+
+WEBSITE CATEGORIES:
+জাতীয়, রাজনীতি, অর্থনীতি, আন্তর্জাতিক, সারাদেশ, খেলা, ধর্ম, স্বাস্থ্য, ভিডিও, কলাম, ফিচার, মতামত, সাহিত্য, আইন ও আদালত, অন্যান্য।
+
+MAIN FEATURES:
+- Responsive navigation and mobile menu.
+- Breaking news ticker.
+- Latest and popular news sections.
+- Category-based news browsing.
+- Featured news section.
+- News search.
+- Article details with related news.
+- Social sharing.
+- Advertisement placements.
+- Professional footer.
+- Complete admin dashboard and content management.
+
+IMPORTANT:
+Maintain consistent branding throughout every page. Do not introduce unrelated colors, excessive gradients, unnecessary animations, or cluttered layouts. Prioritize readability, performance, accessibility, responsiveness, and a premium editorial appearance.

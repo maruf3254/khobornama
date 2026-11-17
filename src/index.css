@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   KHOBORNAMA - GLOBAL DESIGN SYSTEM
+======================================== */
+
+:root {
+  --color-primary: #202020;
+  --color-background: #E4E1DC;
+  --color-surface: #F8F7F4;
+  --color-accent: #34483C;
+
+  --font-bengali: 'Hind Siliguri', sans-serif;
+  --font-english: 'Inter', sans-serif;
+}
+
+/* Universal Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  max-width: 100%;
+  overflow-x: clip;
+
+  font-family: var(--font-english), var(--font-bengali), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+
+  color: var(--color-primary);
+  background-color: var(--color-background);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bengali Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+button,
+input,
+textarea,
+select,
+label {
+  font-family: var(--font-english), var(--font-bengali), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-primary);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Links */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Buttons */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Images */
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+  height: auto;
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline-color: var(--color-accent);
+}
+
+/* Text Selection */
+::selection {
+  color: #FFFFFF;
+  background-color: var(--color-accent);
+}
+
+/* Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-surface);
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 20px;
+}
+
+/* Hide Scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Line Clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Smooth Transitions */
+a,
+button {
+  transition-property: color, background-color, border-color, opacity, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* Main Container */
+.container-custom {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    padding-inline: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    padding-inline: 32px;
+  }
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
