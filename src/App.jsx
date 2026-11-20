@@ -8,6 +8,10 @@ import Footer from './components/Footer'
 
 // User Pages
 import Home from './pages/Home'
+import About from './pages/About.jsx'
+import Contact from './pages/Contact.jsx'
+import Terms from './pages/Terms.jsx'
+import Privacy from './pages/Privacy.jsx'
 import NewsDetail from './pages/NewsDetail'
 import Category from './pages/Category'
 import Favorites from './pages/Favorites'
@@ -44,6 +48,10 @@ function App () {
                 <main className='flex-1'>
                   <Routes>
                     <Route path='/' element={<Home />} />
+                    <Route path='/about' element={<About />} />
+                    <Route path='/contact' element={<Contact />} />
+                    <Route path='/terms' element={<Terms />} />
+                    <Route path='/privacy' element={<Privacy />} />
                     <Route path='/news/:slug' element={<NewsDetail />} />
                     <Route path='/category/:category' element={<Category />} />
                     <Route path='/favorites' element={<Favorites />} />
