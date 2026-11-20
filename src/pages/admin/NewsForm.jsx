@@ -687,13 +687,13 @@ const NewsForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-7'>
+        <div className='max-w-screen-2xl mx-auto  sm:px-6 lg:px-8 py-7'>
           <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
             {/* Main Editor */}
             <div className='xl:col-span-2 space-y-6'>
               {/* Headline and Summary */}
               <section className='bg-[#F8F7F4] border border-[#202020]/10'>
-                <div className='px-5 sm:px-7 py-5 border-b border-[#202020]/10 flex items-center gap-3'>
+                <div className='px-2 sm:px-7 py-5 border-b border-[#202020]/10 flex items-center gap-3'>
                   <div className='w-9 h-9 flex items-center justify-center bg-[#34483C]/10 text-[#34483C]'>
                     <FiType size={18} />
                   </div>
@@ -708,7 +708,7 @@ const NewsForm = () => {
                   </div>
                 </div>
 
-                <div className='p-5 sm:p-7 space-y-6'>
+                <div className='p-2 sm:p-7 space-y-6'>
                   {/* Title */}
                   <div>
                     <div className='flex justify-between items-center mb-2'>
@@ -895,7 +895,7 @@ const NewsForm = () => {
                     </div>
 
                     {/* Content Textarea */}
-                    <div className='p-4 sm:p-7'>
+                    <div className='p-1 sm:p-7'>
                       <textarea
                         ref={editorRef}
                         name='content'
