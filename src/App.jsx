@@ -8,10 +8,14 @@ import Footer from './components/Footer'
 
 // User Pages
 import Home from './pages/Home'
-import About from './pages/About.jsx'
-import Contact from './pages/Contact.jsx'
-import Terms from './pages/Terms.jsx'
-import Privacy from './pages/Privacy.jsx'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
+import Career from './pages/Career'
+import Latest from './pages/Latest'
+import Popular from './pages/Popular'
+
 import NewsDetail from './pages/NewsDetail'
 import Category from './pages/Category'
 import Favorites from './pages/Favorites'
@@ -52,6 +56,11 @@ function App () {
                     <Route path='/contact' element={<Contact />} />
                     <Route path='/terms' element={<Terms />} />
                     <Route path='/privacy' element={<Privacy />} />
+                    <Route path='/career' element={<Career />} />
+                    <Route path='/popular' element={<Popular />} />
+                    <Route path='/latest' element={<Latest />} />
+
+
                     <Route path='/news/:slug' element={<NewsDetail />} />
                     <Route path='/category/:category' element={<Category />} />
                     <Route path='/favorites' element={<Favorites />} />

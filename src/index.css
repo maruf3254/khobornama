@@ -215,3 +215,9 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

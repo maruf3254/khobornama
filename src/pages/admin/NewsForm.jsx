@@ -311,15 +311,21 @@ import { adminAPI } from '../../services/api'
 import Loading from '../../components/Loading'
 
 const CATEGORIES = [
+  { value: 'national', label: 'National', bn: 'জাতীয়' },
   { value: 'politics', label: 'Politics', bn: 'রাজনীতি' },
-  { value: 'business', label: 'Business', bn: 'ব্যবসা-বাণিজ্য' },
-  { value: 'technology', label: 'Technology', bn: 'প্রযুক্তি' },
-  { value: 'sports', label: 'Sports', bn: 'খেলাধুলা' },
-  { value: 'entertainment', label: 'Entertainment', bn: 'বিনোদন' },
+  { value: 'economy', label: 'Economy', bn: 'অর্থনীতি' },
+  { value: 'international', label: 'International', bn: 'আন্তর্জাতিক' },
+  { value: 'country', label: 'Countrywide', bn: 'সারাদেশ' },
+  { value: 'sports', label: 'Sports', bn: 'খেলা' },
+  { value: 'religion', label: 'Religion', bn: 'ধর্ম' },
   { value: 'health', label: 'Health', bn: 'স্বাস্থ্য' },
-  { value: 'science', label: 'Science', bn: 'বিজ্ঞান' },
-  { value: 'world', label: 'World', bn: 'আন্তর্জাতিক' },
-  { value: 'local', label: 'Local', bn: 'স্থানীয়' }
+  { value: 'video', label: 'Video', bn: 'ভিডিও' },
+  { value: 'column', label: 'Column', bn: 'কলাম' },
+  { value: 'feature', label: 'Feature', bn: 'ফিচার' },
+  { value: 'opinion', label: 'Opinion', bn: 'মতামত' },
+  { value: 'literature', label: 'Literature', bn: 'সাহিত্য' },
+  { value: 'law', label: 'Law & Court', bn: 'আইন ও আদালত' },
+  { value: 'others', label: 'Others', bn: 'অন্যান্য' }
 ]
 
 const STATUSES = [

@@ -64,7 +64,9 @@ export const newsAPI = {
   toggleFavorite: (id) => api.post(`/news/${id}/favorite`),
   getFavorites: (params) => api.get('/news/user/favorites', { params }),
   getComments: (newsId, params) => api.get(`/news/${newsId}/comments`, { params }),
-  addComment: (newsId, data) => api.post(`/news/${newsId}/comments`, data)
+  addComment: (newsId, data) => api.post(`/news/${newsId}/comments`, data),
+  getLatest: (params) => api.get('/news/latest', { params }),
+  getPopular: (params) => api.get('/news/popular', { params }),
 };
 
 // Comment APIs
