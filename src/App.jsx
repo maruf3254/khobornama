@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
 // User Pages
+import Advertisement from "./pages/Advertisement"
 import Home from './pages/Home'
 import About from './pages/About'
 import Contact from './pages/Contact'
@@ -15,6 +16,7 @@ import Privacy from './pages/Privacy'
 import Career from './pages/Career'
 import Latest from './pages/Latest'
 import Popular from './pages/Popular'
+
 
 import NewsDetail from './pages/NewsDetail'
 import Category from './pages/Category'
@@ -73,6 +75,7 @@ function App () {
                     <Route path='/career' element={<Career />} />
                     <Route path='/popular' element={<Popular />} />
                     <Route path='/latest' element={<Latest />} />
+                    <Route path='/advertisement' element={<Advertisement />} />
 
                     <Route path='/news/:slug' element={<NewsDetail />} />
                     <Route path='/category/:category' element={<Category />} />
