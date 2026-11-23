@@ -10,18 +10,40 @@ import {
   FiExternalLink,
   FiGrid,
   FiChevronRight,
-  FiUser
+  FiUser,
+  FiUsers
 } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 
 const LOGO = 'https://i.imgur.com/Xkp2QhW.png'
 
 const AdminLayout = () => {
-  const { isAdmin, user } = useAuth()
+  const { user, isAuthenticated, logout, loading } = useAuth()
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
 
-  if (!isAdmin) {
+  // 1. Wait until authentication restoration completes
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-[#E4E1DC]'>
+        <div className='text-center'>
+          <div className='mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#34483C]' />
+          <p className='mt-4 text-sm font-medium text-[#34483C]'>
+            Loading admin workspace...
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // 2. Authentication check
+  if (!isAuthenticated || !user) {
+    return <Navigate to='/login' replace state={{ from: location }} />
+  }
+
+  // 3. Admin role check
+  if (user.role !== 'admin') {
     return <Navigate to='/' replace />
   }
 
@@ -37,13 +59,22 @@ const AdminLayout = () => {
       to: '/admin/news',
       icon: FiFileText,
       label: 'All News',
-      description: 'Manage published articles'
+      description: 'Manage published articles',
+      end: true
     },
     {
       to: '/admin/news/create',
       icon: FiPlusCircle,
       label: 'Create News',
-      description: 'Write a new article'
+      description: 'Write a new article',
+      end: true
+    },
+    {
+      to: '/admin/users',
+      icon: FiUsers,
+      label: 'Users',
+      description: 'Manage users and sub editors',
+      end: true
     }
   ]
 

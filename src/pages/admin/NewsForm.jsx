@@ -1,282 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
-// import { adminAPI } from '../../services/api';
-// import Loading from '../../components/Loading';
-
-// const NewsForm = () => {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const isEditing = Boolean(id);
-
-//   const [loading, setLoading] = useState(isEditing);
-//   const [submitting, setSubmitting] = useState(false);
-//   const [formData, setFormData] = useState({
-//     title: '',
-//     content: '',
-//     summary: '',
-//     category: 'technology',
-//     tags: '',
-//     image: '',
-//     status: 'published',
-//     isFeatured: false
-//   });
-
-//   const categories = [
-//     'politics', 'business', 'technology', 'sports',
-//     'entertainment', 'health', 'science', 'world', 'local'
-//   ];
-
-//   useEffect(() => {
-//     if (isEditing) {
-//       const fetchNews = async () => {
-//         try {
-//           const res = await adminAPI.getNewsById(id);
-//           const news = res.data.data;
-//           setFormData({
-//             title: news.title,
-//             content: news.content,
-//             summary: news.summary || '',
-//             category: news.category,
-//             tags: news.tags?.join(', ') || '',
-//             image: news.image || '',
-//             status: news.status,
-//             isFeatured: news.isFeatured
-//           });
-//         } catch (error) {
-//           toast.error('Failed to fetch news article');
-//           navigate('/admin/news');
-//         } finally {
-//           setLoading(false);
-//         }
-//       };
-
-//       fetchNews();
-//     }
-//   }, [id, isEditing, navigate]);
-
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setFormData({
-//       ...formData,
-//       [name]: type === 'checkbox' ? checked : value
-//     });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setSubmitting(true);
-
-//     try {
-//       if (isEditing) {
-//         await adminAPI.updateNews(id, formData);
-//         toast.success('News updated successfully');
-//       } else {
-//         await adminAPI.createNews(formData);
-//         toast.success('News created successfully');
-//       }
-//       navigate('/admin/news');
-//     } catch (error) {
-//       toast.error(error.response?.data?.message || 'Failed to save news');
-//     } finally {
-//       setSubmitting(false);
-//     }
-//   };
-
-//   const handleImageUpload = async (e) => {
-//     const file = e.target.files[0];
-//     if (!file) return;
-
-//     const formDataImage = new FormData();
-//     formDataImage.append('image', file);
-
-//     try {
-//       const res = await adminAPI.uploadImage(formDataImage);
-//       setFormData({ ...formData, image: res.data.data.path });
-//       toast.success('Image uploaded successfully');
-//     } catch (error) {
-//       toast.error('Failed to upload image');
-//     }
-//   };
-
-//   if (loading) return <Loading />;
-
-//   return (
-//     <div className="max-w-4xl mx-auto">
-//       <h1 className="text-2xl font-bold mb-6">
-//         {isEditing ? 'Edit News Article' : 'Create News Article'}
-//       </h1>
-
-//       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md">
-//         {/* Title */}
-//         <div className="mb-4">
-//           <label className="block text-gray-700 font-medium mb-2">
-//             Title <span className="text-red-500">*</span>
-//           </label>
-//           <input
-//             type="text"
-//             name="title"
-//             value={formData.title}
-//             onChange={handleChange}
-//             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             required
-//           />
-//         </div>
-
-//         {/* Summary */}
-//         <div className="mb-4">
-//           <label className="block text-gray-700 font-medium mb-2">
-//             Summary
-//           </label>
-//           <textarea
-//             name="summary"
-//             value={formData.summary}
-//             onChange={handleChange}
-//             rows={2}
-//             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             placeholder="Brief summary of the article..."
-//           />
-//         </div>
-
-//         {/* Content */}
-//         <div className="mb-4">
-//           <label className="block text-gray-700 font-medium mb-2">
-//             Content <span className="text-red-500">*</span>
-//           </label>
-//           <textarea
-//             name="content"
-//             value={formData.content}
-//             onChange={handleChange}
-//             rows={10}
-//             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             required
-//             placeholder="Write your article content here... (HTML supported)"
-//           />
-//         </div>
-
-//         {/* Category & Status */}
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-//           <div>
-//             <label className="block text-gray-700 font-medium mb-2">
-//               Category <span className="text-red-500">*</span>
-//             </label>
-//             <select
-//               name="category"
-//               value={formData.category}
-//               onChange={handleChange}
-//               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             >
-//               {categories.map((cat) => (
-//                 <option key={cat} value={cat} className="capitalize">
-//                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div>
-//             <label className="block text-gray-700 font-medium mb-2">
-//               Status
-//             </label>
-//             <select
-//               name="status"
-//               value={formData.status}
-//               onChange={handleChange}
-//               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             >
-//               <option value="draft">Draft</option>
-//               <option value="published">Published</option>
-//               <option value="archived">Archived</option>
-//             </select>
-//           </div>
-//         </div>
-
-//         {/* Tags */}
-//         <div className="mb-4">
-//           <label className="block text-gray-700 font-medium mb-2">
-//             Tags
-//           </label>
-//           <input
-//             type="text"
-//             name="tags"
-//             value={formData.tags}
-//             onChange={handleChange}
-//             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//             placeholder="Enter tags separated by commas (e.g., tech, ai, innovation)"
-//           />
-//         </div>
-
-//         {/* Image */}
-//         <div className="mb-4">
-//           <label className="block text-gray-700 font-medium mb-2">
-//             Featured Image
-//           </label>
-//           <div className="flex gap-4 items-start">
-//             <input
-//               type="text"
-//               name="image"
-//               value={formData.image}
-//               onChange={handleChange}
-//               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500"
-//               placeholder="Image URL or upload"
-//             />
-//             <label className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200">
-//               Upload
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={handleImageUpload}
-//                 className="hidden"
-//               />
-//             </label>
-//           </div>
-//           {formData.image && (
-//             <img
-//               src={formData.image}
-//               alt="Preview"
-//               className="mt-2 max-h-40 rounded-lg"
-//             />
-//           )}
-//         </div>
-
-//         {/* Featured */}
-//         <div className="mb-6">
-//           <label className="flex items-center gap-2 cursor-pointer">
-//             <input
-//               type="checkbox"
-//               name="isFeatured"
-//               checked={formData.isFeatured}
-//               onChange={handleChange}
-//               className="w-5 h-5 text-primary-600 rounded"
-//             />
-//             <span className="text-gray-700 font-medium">Mark as Featured</span>
-//           </label>
-//         </div>
-
-//         {/* Actions */}
-//         <div className="flex gap-4">
-//           <button
-//             type="submit"
-//             disabled={submitting}
-//             className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
-//           >
-//             {submitting ? 'Saving...' : isEditing ? 'Update Article' : 'Create Article'}
-//           </button>
-//           <button
-//             type="button"
-//             onClick={() => navigate('/admin/news')}
-//             className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-//           >
-//             Cancel
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default NewsForm;
-
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
@@ -293,6 +14,8 @@ import {
   FiLink,
   FiList,
   FiAlignLeft,
+  FiAlignCenter,
+  FiAlignRight,
   FiMinus,
   FiType,
   FiX,
@@ -304,9 +27,20 @@ import {
   FiArchive,
   FiClock,
   FiHash,
-  FiRefreshCw
+  FiRefreshCw,
+  FiRotateCcw,
+  FiRotateCw,
+  FiStopCircle
 } from 'react-icons/fi'
 import { toast } from 'react-toastify'
+import DOMPurify from 'dompurify'
+
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
+import TextAlign from '@tiptap/extension-text-align'
+
 import { adminAPI } from '../../services/api'
 import Loading from '../../components/Loading'
 
@@ -353,17 +87,30 @@ const initialFormData = {
   title: '',
   content: '',
   summary: '',
-  category: 'technology',
-  tags: '',
+  category: 'national',
+  tags: [],
   image: '',
   status: 'published',
   isFeatured: false
 }
 
+const getPlainText = html => {
+  if (!html) return ''
+
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim()
+}
+
 const NewsForm = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const editorRef = useRef(null)
   const fileInputRef = useRef(null)
 
   const isEditing = Boolean(id)
@@ -373,8 +120,86 @@ const NewsForm = () => {
   const [uploading, setUploading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [formData, setFormData] = useState(initialFormData)
+  const [tagInput, setTagInput] = useState('')
 
-  // Fetch existing article
+  // Add Tag
+  const addTag = (value = tagInput) => {
+    const newTag = value.trim().replace(/^#+/, '').replace(/,+$/, '').trim()
+
+    if (!newTag) return
+
+    if (formData.tags.some(tag => tag.toLowerCase() === newTag.toLowerCase())) {
+      toast.error('This tag already exists')
+      return
+    }
+
+    if (formData.tags.length >= 10) {
+      toast.error('Maximum 10 tags allowed')
+      return
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      tags: [...prev.tags, newTag]
+    }))
+
+    setTagInput('')
+  }
+
+  // Remove Tag
+  const removeTag = tagToRemove => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }))
+  }
+
+  // Tag Keyboard Handler
+  const handleTagKeyDown = e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault()
+      addTag()
+    }
+
+    if (e.key === 'Backspace' && !tagInput && formData.tags.length > 0) {
+      removeTag(formData.tags[formData.tags.length - 1])
+    }
+  }
+
+  // TipTap Rich Text Editor
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        linkOnPaste: true,
+        HTMLAttributes: {
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      })
+    ],
+    content: '',
+    editorProps: {
+      attributes: {
+        class:
+          'tiptap min-h-[450px] px-4 sm:px-6 py-5 outline-none text-sm sm:text-base leading-8 text-[#202020]'
+      }
+    },
+    onUpdate: ({ editor }) => {
+      setFormData(prev => ({
+        ...prev,
+        content: editor.getHTML()
+      }))
+    }
+  })
+
+  // Fetch Existing Article
   useEffect(() => {
     if (!isEditing) return
 
@@ -387,8 +212,8 @@ const NewsForm = () => {
           title: news.title || '',
           content: news.content || '',
           summary: news.summary || '',
-          category: news.category || 'technology',
-          tags: news.tags?.join(', ') || '',
+          category: news.category || 'national',
+          tags: Array.isArray(news.tags) ? news.tags : [],
           image: news.image || '',
           status: news.status || 'draft',
           isFeatured: Boolean(news.isFeatured)
@@ -405,7 +230,18 @@ const NewsForm = () => {
     fetchNews()
   }, [id, isEditing, navigate])
 
-  // Form change handler
+  // Set Fetched Content Inside TipTap Editor
+  useEffect(() => {
+    if (!editor || loading || !isEditing) return
+
+    const safeContent = DOMPurify.sanitize(formData.content || '')
+
+    editor.commands.setContent(safeContent, {
+      emitUpdate: false
+    })
+  }, [editor, loading, isEditing, id])
+
+  // Form Change Handler
   const handleChange = e => {
     const { name, value, type, checked } = e.target
 
@@ -415,134 +251,58 @@ const NewsForm = () => {
     }))
   }
 
-  // Word count
-  const wordCount = formData.content
-    .replace(/<[^>]*>/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length
+  // Word Count and Character Count
+  const plainContent = getPlainText(formData.content)
 
-  const characterCount = formData.content.replace(/<[^>]*>/g, '').length
+  const wordCount = plainContent
+    ? plainContent.split(/\s+/).filter(Boolean).length
+    : 0
 
+  const characterCount = plainContent.length
   const readingTime = Math.max(1, Math.ceil(wordCount / 200))
 
-  // Insert formatting into editor
-  const insertFormatting = (
-    before,
-    after = '',
-    placeholder = 'Your text here'
-  ) => {
-    const editor = editorRef.current
-
+  // Insert or Update Hyperlink
+  const addEditorLink = () => {
     if (!editor) return
 
-    const start = editor.selectionStart
-    const end = editor.selectionEnd
+    const previousUrl = editor.getAttributes('link').href || ''
+    const url = window.prompt('Enter the URL:', previousUrl)
 
-    const selectedText = formData.content.substring(start, end)
-    const text = selectedText || placeholder
+    if (url === null) return
 
-    const insertion = `${before}${text}${after}`
+    if (!url.trim()) {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+      return
+    }
 
-    const updatedContent =
-      formData.content.substring(0, start) +
-      insertion +
-      formData.content.substring(end)
+    let validUrl
 
-    setFormData(prev => ({
-      ...prev,
-      content: updatedContent
-    }))
+    try {
+      validUrl = new URL(url.trim())
 
-    requestAnimationFrame(() => {
-      editor.focus()
+      if (!['http:', 'https:'].includes(validUrl.protocol)) {
+        toast.error('Only HTTP and HTTPS links are allowed')
+        return
+      }
+    } catch {
+      toast.error('Please enter a valid URL')
+      return
+    }
 
-      const cursorPosition = start + insertion.length
-
-      editor.setSelectionRange(cursorPosition, cursorPosition)
-    })
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange('link')
+      .setLink({ href: validUrl.href })
+      .run()
   }
 
-  // Insert HTML elements
-  const insertHeading = level => {
-    insertFormatting(`<h${level}>`, `</h${level}>\n`, 'Your heading')
-  }
-
-  const insertParagraph = () => {
-    insertFormatting('<p>', '</p>\n', 'Write your paragraph here.')
-  }
-
-  const insertQuote = () => {
-    insertFormatting(
-      '<blockquote>',
-      '</blockquote>\n',
-      'Enter an important quotation here.'
-    )
-  }
-
-  const insertList = (ordered = false) => {
-    const editor = editorRef.current
-    if (!editor) return
-
-    const start = editor.selectionStart
-    const end = editor.selectionEnd
-
-    const selectedText = formData.content.substring(start, end)
-    const lines = (selectedText || 'List item').split('\n')
-
-    const tag = ordered ? 'ol' : 'ul'
-
-    const listHTML = `<${tag}>\n${lines
-      .map(line => `  <li>${line || 'List item'}</li>`)
-      .join('\n')}\n</${tag}>\n`
-
-    const updatedContent =
-      formData.content.substring(0, start) +
-      listHTML +
-      formData.content.substring(end)
-
-    setFormData(prev => ({
-      ...prev,
-      content: updatedContent
-    }))
-
-    requestAnimationFrame(() => {
-      editor.focus()
-
-      const cursorPosition = start + listHTML.length
-      editor.setSelectionRange(cursorPosition, cursorPosition)
-    })
-  }
-
-  const insertLink = () => {
-    const url = window.prompt('Enter the URL:')
-
-    if (!url) return
-
-    const editor = editorRef.current
-    if (!editor) return
-
-    const start = editor.selectionStart
-    const end = editor.selectionEnd
-
-    const selectedText = formData.content.substring(start, end)
-    const linkText = selectedText || 'Link text'
-
-    insertFormatting(
-      `<a href="${url}" target="_blank" rel="noopener noreferrer">`,
-      '</a>',
-      linkText
-    )
-  }
-
+  // Clear Editor
   const clearEditor = () => {
-    if (!formData.content.trim()) return
+    if (!editor || !formData.content.trim()) return
 
     if (window.confirm('Are you sure you want to clear the article content?')) {
-      setFormData(prev => ({
-        ...prev,
-        content: ''
-      }))
+      editor.commands.clearContent()
     }
   }
 
@@ -590,15 +350,21 @@ const NewsForm = () => {
       return
     }
 
-    if (!formData.content.trim()) {
+    const contentToSave = editor ? editor.getHTML() : formData.content
+
+    if (!getPlainText(contentToSave)) {
       toast.error('Please write the article content')
       return
     }
+
+    const safeContent = DOMPurify.sanitize(contentToSave)
 
     const payload = {
       ...formData,
       title: formData.title.trim(),
       summary: formData.summary.trim(),
+      content: safeContent,
+      tags: formData.tags,
       status: statusOverride || formData.status
     }
 
@@ -607,6 +373,7 @@ const NewsForm = () => {
 
       if (isEditing) {
         await adminAPI.updateNews(id, payload)
+
         toast.success(
           statusOverride === 'draft'
             ? 'Article saved as draft'
@@ -614,6 +381,7 @@ const NewsForm = () => {
         )
       } else {
         await adminAPI.createNews(payload)
+
         toast.success(
           statusOverride === 'draft'
             ? 'Article saved as draft'
@@ -640,6 +408,197 @@ const NewsForm = () => {
 
   return (
     <div className='min-h-screen bg-[#E4E1DC]'>
+      <style>{`
+        .tiptap {
+          min-height: 450px;
+          outline: none;
+          color: #202020;
+          line-height: 1.9;
+          font-size: 16px;
+          overflow-wrap: break-word;
+        }
+
+        .tiptap:focus {
+          outline: none;
+        }
+
+        .tiptap p {
+          margin: 0 0 1.25rem;
+        }
+
+        .tiptap h1 {
+          font-size: 2rem;
+          line-height: 1.3;
+          font-weight: 800;
+          margin: 2rem 0 1rem;
+        }
+
+        .tiptap h2 {
+          font-size: 1.65rem;
+          line-height: 1.4;
+          font-weight: 750;
+          margin: 1.8rem 0 0.9rem;
+        }
+
+        .tiptap h3 {
+          font-size: 1.3rem;
+          line-height: 1.5;
+          font-weight: 700;
+          margin: 1.5rem 0 0.75rem;
+        }
+
+        .tiptap strong {
+          font-weight: 800;
+        }
+
+        .tiptap em {
+          font-style: italic;
+        }
+
+        .tiptap u {
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+
+        .tiptap s {
+          text-decoration: line-through;
+        }
+
+        .tiptap a {
+          color: #34483C;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+
+        .tiptap ul,
+        .tiptap ol {
+          padding-left: 2rem;
+          margin: 1rem 0 1.5rem;
+        }
+
+        .tiptap ul {
+          list-style-type: disc;
+        }
+
+        .tiptap ol {
+          list-style-type: decimal;
+        }
+
+        .tiptap li {
+          padding-left: 0.25rem;
+          margin: 0.4rem 0;
+        }
+
+        .tiptap blockquote {
+          border-left: 4px solid #34483C;
+          padding: 0.75rem 1.25rem;
+          margin: 1.5rem 0;
+          background: #F1F0EC;
+          color: #555;
+          font-style: italic;
+        }
+
+        .tiptap hr {
+          border: none;
+          border-top: 1px solid #20202030;
+          margin: 2rem 0;
+        }
+
+        .tiptap p.is-editor-empty:first-child::before {
+          color: #b5b5b5;
+          content: 'Write your article here...';
+          float: left;
+          height: 0;
+          pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+          .tiptap {
+            min-height: 400px;
+            font-size: 15px;
+            line-height: 1.85;
+          }
+
+          .tiptap h1 {
+            font-size: 1.7rem;
+          }
+
+          .tiptap h2 {
+            font-size: 1.45rem;
+          }
+
+          .tiptap h3 {
+            font-size: 1.2rem;
+          }
+        }
+
+        .article-preview-content {
+          overflow-wrap: break-word;
+          line-height: 1.9;
+        }
+
+        .article-preview-content p {
+          margin-bottom: 1.25rem;
+        }
+
+        .article-preview-content h1,
+        .article-preview-content h2,
+        .article-preview-content h3 {
+          color: #202020;
+          font-weight: 700;
+          line-height: 1.4;
+          margin: 1.5rem 0 1rem;
+        }
+
+        .article-preview-content h1 {
+          font-size: 2rem;
+        }
+
+        .article-preview-content h2 {
+          font-size: 1.65rem;
+        }
+
+        .article-preview-content h3 {
+          font-size: 1.3rem;
+        }
+
+        .article-preview-content ul {
+          list-style: disc;
+          padding-left: 2rem;
+          margin: 1rem 0;
+        }
+
+        .article-preview-content ol {
+          list-style: decimal;
+          padding-left: 2rem;
+          margin: 1rem 0;
+        }
+
+        .article-preview-content blockquote {
+          border-left: 4px solid #34483C;
+          padding: 0.75rem 1.25rem;
+          margin: 1.5rem 0;
+          background: #F1F0EC;
+          font-style: italic;
+        }
+
+        .article-preview-content a {
+          color: #34483C;
+          text-decoration: underline;
+        }
+
+        .article-preview-content img {
+          max-width: 100%;
+          height: auto;
+        }
+
+        .article-preview-content hr {
+          border: 0;
+          border-top: 1px solid #ddd;
+          margin: 2rem 0;
+        }
+      `}</style>
+
       {/* Page Header */}
       <div className='bg-[#202020] text-white'>
         <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
@@ -819,102 +778,228 @@ const NewsForm = () => {
                         <ToolbarButton
                           icon={FiBold}
                           label='Bold'
+                          active={editor?.isActive('bold')}
+                          disabled={!editor}
                           onClick={() =>
-                            insertFormatting('<strong>', '</strong>')
+                            editor?.chain().focus().toggleBold().run()
                           }
                         />
 
                         <ToolbarButton
                           icon={FiItalic}
                           label='Italic'
-                          onClick={() => insertFormatting('<em>', '</em>')}
+                          active={editor?.isActive('italic')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleItalic().run()
+                          }
                         />
 
                         <ToolbarButton
                           icon={FiUnderline}
                           label='Underline'
-                          onClick={() => insertFormatting('<u>', '</u>')}
+                          active={editor?.isActive('underline')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleUnderline().run()
+                          }
+                        />
+
+                        <ToolbarButton
+                          icon={FiStopCircle}
+                          label='Strike'
+                          active={editor?.isActive('strike')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleStrike().run()
+                          }
                         />
 
                         <ToolbarDivider />
 
                         <ToolbarButton
+                          label='H1'
+                          active={editor?.isActive('heading', { level: 1 })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor
+                              ?.chain()
+                              .focus()
+                              .toggleHeading({ level: 1 })
+                              .run()
+                          }
+                        />
+
+                        <ToolbarButton
                           label='H2'
-                          onClick={() => insertHeading(2)}
+                          active={editor?.isActive('heading', { level: 2 })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor
+                              ?.chain()
+                              .focus()
+                              .toggleHeading({ level: 2 })
+                              .run()
+                          }
                         />
 
                         <ToolbarButton
                           label='H3'
-                          onClick={() => insertHeading(3)}
+                          active={editor?.isActive('heading', { level: 3 })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor
+                              ?.chain()
+                              .focus()
+                              .toggleHeading({ level: 3 })
+                              .run()
+                          }
                         />
 
                         <ToolbarButton
-                          icon={FiAlignLeft}
+                          icon={FiType}
                           label='Paragraph'
-                          onClick={insertParagraph}
+                          active={editor?.isActive('paragraph')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().setParagraph().run()
+                          }
                         />
 
                         <ToolbarDivider />
 
                         <ToolbarButton
                           icon={FiList}
-                          label='Bullet list'
-                          onClick={() => insertList(false)}
+                          label='Bullet'
+                          labelTitle='Bullet List'
+                          active={editor?.isActive('bulletList')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleBulletList().run()
+                          }
                         />
 
                         <ToolbarButton
                           label='1.'
-                          labelTitle='Numbered list'
-                          onClick={() => insertList(true)}
+                          labelTitle='Numbered List'
+                          active={editor?.isActive('orderedList')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleOrderedList().run()
+                          }
                         />
 
-                        <ToolbarButton label='Quote' onClick={insertQuote} />
+                        <ToolbarButton
+                          label='Quote'
+                          labelTitle='Blockquote'
+                          active={editor?.isActive('blockquote')}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().toggleBlockquote().run()
+                          }
+                        />
+
+                        <ToolbarDivider />
+
+                        <ToolbarButton
+                          icon={FiAlignLeft}
+                          labelTitle='Align Left'
+                          active={editor?.isActive({ textAlign: 'left' })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().setTextAlign('left').run()
+                          }
+                        />
+
+                        <ToolbarButton
+                          icon={FiAlignCenter}
+                          labelTitle='Align Center'
+                          active={editor?.isActive({ textAlign: 'center' })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().setTextAlign('center').run()
+                          }
+                        />
+
+                        <ToolbarButton
+                          icon={FiAlignRight}
+                          labelTitle='Align Right'
+                          active={editor?.isActive({ textAlign: 'right' })}
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().setTextAlign('right').run()
+                          }
+                        />
 
                         <ToolbarDivider />
 
                         <ToolbarButton
                           icon={FiLink}
                           label='Link'
-                          onClick={insertLink}
+                          labelTitle='Insert Link'
+                          active={editor?.isActive('link')}
+                          disabled={!editor}
+                          onClick={addEditorLink}
+                        />
+
+                        <ToolbarButton
+                          label='Unlink'
+                          labelTitle='Remove Link'
+                          disabled={!editor || !editor.isActive('link')}
+                          onClick={() =>
+                            editor?.chain().focus().unsetLink().run()
+                          }
                         />
 
                         <ToolbarButton
                           icon={FiMinus}
                           label='Divider'
-                          onClick={() => insertFormatting('<hr />\n', '', '')}
+                          labelTitle='Horizontal Divider'
+                          disabled={!editor}
+                          onClick={() =>
+                            editor?.chain().focus().setHorizontalRule().run()
+                          }
+                        />
+
+                        <ToolbarDivider />
+
+                        <ToolbarButton
+                          icon={FiRotateCcw}
+                          labelTitle='Undo'
+                          disabled={!editor || !editor.can().undo()}
+                          onClick={() => editor?.chain().focus().undo().run()}
+                        />
+
+                        <ToolbarButton
+                          icon={FiRotateCw}
+                          labelTitle='Redo'
+                          disabled={!editor || !editor.can().redo()}
+                          onClick={() => editor?.chain().focus().redo().run()}
                         />
 
                         <div className='ml-auto'>
                           <ToolbarButton
                             icon={FiRefreshCw}
                             label='Clear'
+                            labelTitle='Clear Article Content'
+                            disabled={!editor}
                             onClick={clearEditor}
                           />
                         </div>
                       </div>
                     </div>
 
-                    {/* Content Textarea */}
+                    {/* Rich Text Editor */}
                     <div className='p-1 sm:p-7'>
-                      <textarea
-                        ref={editorRef}
-                        name='content'
-                        value={formData.content}
-                        onChange={handleChange}
-                        required
-                        rows={20}
-                        placeholder={`Write your article here...
-
-Start with a strong opening paragraph.
-
-Use headings to organize your story.
-
-You can use the formatting toolbar to insert HTML elements.`}
-                        className='w-full min-h-[450px] px-4 sm:px-6 py-5 bg-white border border-[#202020]/10 text-sm sm:text-base leading-8 text-[#202020] placeholder:text-gray-300 font-mono resize-y outline-none focus:border-[#34483C] transition-colors'
-                      />
+                      <div className='bg-white border border-[#202020]/10 focus-within:border-[#34483C] transition-colors'>
+                        <EditorContent editor={editor} />
+                      </div>
 
                       <div className='flex flex-wrap items-center justify-between gap-3 mt-4 text-xs text-gray-500'>
-                        <span>HTML formatting supported</span>
+                        <span>
+                          Rich text editor · HTML formatting supported
+                        </span>
+
                         <span>
                           {characterCount} characters · {wordCount} words
                         </span>
@@ -950,9 +1035,9 @@ You can use the formatting toolbar to insert HTML elements.`}
                       <div className='border-t border-[#202020]/10 mt-7 pt-7'>
                         {formData.content ? (
                           <div
-                            className='prose prose-lg max-w-none prose-headings:text-[#202020] prose-a:text-[#34483C] prose-blockquote:border-l-[#34483C] prose-p:leading-8'
+                            className='article-preview-content text-base sm:text-lg text-[#202020]'
                             dangerouslySetInnerHTML={{
-                              __html: formData.content
+                              __html: DOMPurify.sanitize(formData.content)
                             }}
                           />
                         ) : (
@@ -961,6 +1046,20 @@ You can use the formatting toolbar to insert HTML elements.`}
                           </p>
                         )}
                       </div>
+
+                      {formData.tags.length > 0 && (
+                        <div className='flex flex-wrap gap-2 mt-7 pt-5 border-t border-[#202020]/10'>
+                          {formData.tags.map((tag, index) => (
+                            <span
+                              key={`${tag}-${index}`}
+                              className='inline-flex items-center gap-1 px-3 py-1.5 bg-[#34483C]/10 text-[#34483C] text-xs font-medium'
+                            >
+                              <FiHash size={11} />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -983,20 +1082,9 @@ You can use the formatting toolbar to insert HTML elements.`}
 
                 <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
                   <StatCard label='Words' value={wordCount} />
-
                   <StatCard label='Characters' value={characterCount} />
-
                   <StatCard label='Reading Time' value={`${readingTime} min`} />
-
-                  <StatCard
-                    label='Tags'
-                    value={
-                      formData.tags
-                        ? formData.tags.split(',').filter(tag => tag.trim())
-                            .length
-                        : 0
-                    }
-                  />
+                  <StatCard label='Tags' value={formData.tags.length} />
                 </div>
               </section>
             </div>
@@ -1241,39 +1329,62 @@ You can use the formatting toolbar to insert HTML elements.`}
                 </div>
 
                 <div className='p-5'>
-                  <label className='block text-xs font-bold text-gray-600 mb-2'>
-                    TAGS
-                  </label>
+                  <div className='flex items-center justify-between mb-2'>
+                    <label className='block text-xs font-bold text-gray-600'>
+                      TAGS
+                    </label>
 
-                  <textarea
-                    name='tags'
-                    value={formData.tags}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder='technology, innovation, Bangladesh...'
-                    className='w-full px-3 py-3 bg-white border border-[#202020]/15 text-sm outline-none focus:border-[#34483C] resize-y'
-                  />
+                    <span className='text-xs text-gray-400'>
+                      {formData.tags.length}/10
+                    </span>
+                  </div>
 
-                  <p className='text-[11px] text-gray-400 mt-2'>
-                    Separate multiple tags with commas.
-                  </p>
+                  {/* Tag Chips */}
+                  {formData.tags.length > 0 && (
+                    <div className='flex flex-wrap gap-2 mb-3'>
+                      {formData.tags.map((tag, index) => (
+                        <span
+                          key={`${tag}-${index}`}
+                          className='inline-flex items-center gap-2 px-3 py-2 bg-[#34483C]/10 text-[#34483C] text-xs font-medium'
+                        >
+                          <FiHash size={11} />
+                          {tag}
 
-                  {formData.tags.trim() && (
-                    <div className='flex flex-wrap gap-2 mt-4'>
-                      {formData.tags
-                        .split(',')
-                        .filter(tag => tag.trim())
-                        .map((tag, index) => (
-                          <span
-                            key={`${tag}-${index}`}
-                            className='inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#34483C]/10 text-[#34483C] text-xs font-medium'
+                          <button
+                            type='button'
+                            onClick={() => removeTag(tag)}
+                            className='text-[#34483C]/60 hover:text-red-600 transition-colors'
+                            aria-label={`Remove ${tag}`}
                           >
-                            <FiHash size={11} />
-                            {tag.trim()}
-                          </span>
-                        ))}
+                            <FiX size={13} />
+                          </button>
+                        </span>
+                      ))}
                     </div>
                   )}
+
+                  {/* Tag Input */}
+                  <input
+                    type='text'
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={handleTagKeyDown}
+                    onBlur={() => {
+                      if (tagInput.trim()) addTag()
+                    }}
+                    disabled={formData.tags.length >= 10}
+                    placeholder={
+                      formData.tags.length >= 10
+                        ? 'Maximum 10 tags reached'
+                        : 'Type a tag and press Enter...'
+                    }
+                    className='w-full px-3 py-3 bg-white border border-[#202020]/15 text-sm outline-none focus:border-[#34483C] disabled:bg-gray-100 disabled:cursor-not-allowed'
+                  />
+
+                  <p className='text-[11px] text-gray-400 mt-2 leading-5'>
+                    Press Enter or comma to add a tag. You can add up to 10
+                    tags.
+                  </p>
                 </div>
               </section>
 
@@ -1362,21 +1473,42 @@ You can use the formatting toolbar to insert HTML elements.`}
 }
 
 // Reusable Toolbar Button
-const ToolbarButton = ({ icon: Icon, label, labelTitle, onClick }) => (
+const ToolbarButton = ({
+  icon: Icon,
+  label,
+  labelTitle,
+  onClick,
+  active = false,
+  disabled = false
+}) => (
   <button
     type='button'
     title={labelTitle || label}
+    aria-label={labelTitle || label}
+    aria-pressed={active}
+    disabled={disabled}
+    onMouseDown={e => e.preventDefault()}
     onClick={onClick}
-    className='min-w-9 h-9 px-2 flex items-center justify-center gap-1.5 bg-transparent text-gray-600 hover:bg-[#34483C] hover:text-white transition-colors text-xs font-bold'
+    className={`
+      min-w-9 h-9 px-2 flex items-center justify-center gap-1.5
+      text-xs font-bold transition-colors
+      ${
+        active
+          ? 'bg-[#34483C] text-white'
+          : 'bg-transparent text-gray-600 hover:bg-[#34483C] hover:text-white'
+      }
+      disabled:opacity-30 disabled:cursor-not-allowed
+    `}
   >
     {Icon && <Icon size={15} />}
     {label && label}
   </button>
 )
 
+// Toolbar Divider
 const ToolbarDivider = () => <div className='w-px h-6 bg-[#202020]/15 mx-1' />
 
-// Reusable Statistics Card
+// Statistics Card
 const StatCard = ({ label, value }) => (
   <div className='bg-white border border-[#202020]/10 p-4'>
     <p className='text-xl sm:text-2xl font-bold text-[#34483C]'>{value}</p>

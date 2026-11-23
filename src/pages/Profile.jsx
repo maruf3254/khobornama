@@ -207,7 +207,7 @@ const Profile = () => {
             <div className='mt-5 bg-[#34483C] rounded-2xl p-5 text-white'>
               <FiShield size={24} className='mb-4 text-[#D8C7A0]' />
 
-              <h3 className='font-semibold mb-2'>Account Security</h3>
+              <h3 className='font-semibold mb-2 text-[#fff]'>Account Security</h3>
 
               <p className='text-xs leading-relaxed text-white/70'>
                 Keep your account secure by using a strong password and updating

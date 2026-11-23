@@ -1065,6 +1065,16 @@ const Navbar = () => {
                         </Link>
                       )}
 
+                      {user?.role === 'sub-editor' && (
+                        <Link
+                          to='/sub-editor'
+                          className='flex items-center gap-3 px-5 py-3 text-sm hover:bg-[#E4E1DC] transition-colors'
+                        >
+                          <FiSettings />
+                          Editor Dashboard
+                        </Link>
+                      )}
+
                       {isAdmin && (
                         <Link
                           to='/admin'
@@ -1391,6 +1401,16 @@ const Navbar = () => {
                     >
                       <FiSettings />
                       Advertiser Dashboard
+                    </Link>
+                  )}
+
+                  {user?.role === 'sub-editor' && (
+                    <Link
+                      to='/sub-editor'
+                      className='flex items-center gap-3 py-3 text-sm text-[#34483C]'
+                    >
+                      <FiSettings />
+                      Editor Dashboard
                     </Link>
                   )}
 

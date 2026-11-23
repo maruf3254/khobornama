@@ -6,6 +6,7 @@ import { newsAPI } from '../services/api'
 import NewsCard from '../components/NewsCard'
 import Loading from '../components/Loading'
 import CategorySkeleton from '../components/CategorySkeleton.jsx'
+import CategoryAdvertisement from '../components/CategoryAdvertisement'
 
 const categoryNames = {
   national: 'জাতীয়',
@@ -130,6 +131,11 @@ const Category = () => {
           </div>
         </section>
 
+        {/* Top Category Advertisement */}
+        <div className='mb-8'>
+          <CategoryAdvertisement placement='homepage-section' device='all' />
+        </div>
+
         {/* News Content */}
         {error ? (
           <div className='bg-[#F8F7F4] border border-[#202020]/10 rounded-xl p-10 text-center'>
@@ -172,6 +178,25 @@ const Category = () => {
                 পৃষ্ঠা {page} / {totalPages}
               </span>
             </div>
+
+            {/* News Content with Sidebar Advertisement */}
+            {/* <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'> */}
+              {/* Main News */}
+              {/* <div className='lg:col-span-3'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6'>
+                  {news.map(item => (
+                    <NewsCard key={item._id} news={item} />
+                  ))}
+                </div>
+              </div> */}
+
+              {/* Sidebar Advertisement */}
+              {/* <aside className='hidden lg:block'>
+                <div className='sticky top-24'>
+                  <CategoryAdvertisement placement='sidebar' device='desktop' />
+                </div>
+              </aside>
+            </div> */}
 
             {/* News Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6'>

@@ -29,6 +29,12 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/Dashboard'
 import NewsList from './pages/admin/NewsList'
 import NewsForm from './pages/admin/NewsForm'
+import Users from './pages/admin/Users.jsx'
+
+import SubEditorLayout from './components/subeditor/SubEditorLayout'
+import SubEditorDashboard from './pages/subeditor/SubEditorDashboard.jsx'
+import MyNews from './pages/subeditor/MyNews'
+import NewsFormEditor from './pages/subeditor/NewsForm'
 
 function App () {
   return (
@@ -41,6 +47,14 @@ function App () {
             <Route path='news' element={<NewsList />} />
             <Route path='news/create' element={<NewsForm />} />
             <Route path='news/:id' element={<NewsForm />} />
+            <Route path='users' element={<Users />} />
+          </Route>
+
+          <Route path='/sub-editor' element={<SubEditorLayout />}>
+            <Route index element={<SubEditorDashboard />} />
+            <Route path='news' element={<MyNews />} />
+            <Route path='news/create' element={<NewsFormEditor />} />
+            <Route path='news/edit/:id' element={<NewsFormEditor />} />
           </Route>
 
           {/* User Routes */}
@@ -59,7 +73,6 @@ function App () {
                     <Route path='/career' element={<Career />} />
                     <Route path='/popular' element={<Popular />} />
                     <Route path='/latest' element={<Latest />} />
-
 
                     <Route path='/news/:slug' element={<NewsDetail />} />
                     <Route path='/category/:category' element={<Category />} />
