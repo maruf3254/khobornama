@@ -17,6 +17,9 @@ import NewsCard from '../components/NewsCard'
 // Helpers
 // ========================================
 
+const toBanglaNumber = value =>
+  String(value).replace(/[0-9]/g, digit => '০১২৩৪৫৬৭৮৯'[Number(digit)])
+
 const getNewsArray = response => {
   const data = response?.data?.data
 
@@ -87,7 +90,7 @@ const SectionHeading = ({
 }) => (
   <div className='flex items-end justify-between border-b border-[#202020]/20 pb-3 mb-6'>
     <div>
-      <p className='flex items-center gap-2 text-[10px] sm:text-[11px] font-semibold tracking-[0.18em] text-[#34483C] uppercase font-english mb-2'>
+      <p className='flex items-center gap-2 text-[10px] sm:text-[11px] font-semibold tracking-[0.18em] text-[#34483C] uppercase mb-2'>
         {Icon && <Icon size={13} />}
         {eyebrow}
       </p>
@@ -130,7 +133,7 @@ const NewsSection = ({
   news,
   loading,
   category,
-  columns = 'grid-cols-1 sm:grid-cols-2',
+  columns = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
   limit = 4
 }) => {
   const items = news.slice(0, limit)
@@ -171,38 +174,26 @@ const CATEGORY_SECTIONS = [
   {
     category: 'politics',
     title: 'রাজনীতি',
-    eyebrow: 'POLITICS',
+    eyebrow: 'রাজনৈতিক সংবাদ',
     icon: FiActivity
   },
   {
     category: 'economy',
-    title: 'অর্থনীতি ও ব্যবসা',
-    eyebrow: 'BUSINESS & ECONOMY',
+    title: 'অর্থনীতি',
+    eyebrow: 'অর্থনীতি ও ব্যবসা',
     icon: FiTrendingUp
   },
   {
     category: 'international',
     title: 'আন্তর্জাতিক',
-    eyebrow: 'INTERNATIONAL',
+    eyebrow: 'বিশ্ব সংবাদ',
     icon: FiGlobe
   },
   {
     category: 'sports',
     title: 'খেলাধুলা',
-    eyebrow: 'SPORTS',
+    eyebrow: 'খেলার মাঠের সংবাদ',
     icon: FiActivity
-  },
-  {
-    category: 'health',
-    title: 'স্বাস্থ্য',
-    eyebrow: 'HEALTH',
-    icon: FiActivity
-  },
-  {
-    category: 'feature',
-    title: 'বিশেষ প্রতিবেদন',
-    eyebrow: 'SPECIAL REPORT',
-    icon: FiLayers
   }
 ]
 
@@ -307,7 +298,8 @@ const Home = () => {
         CATEGORY_SECTIONS.map(async section => {
           try {
             const response = await newsAPI.getByCategory(section.category, {
-              limit: 4
+              limit: 4,
+              sort: 'latest'
             })
 
             return {
@@ -353,7 +345,7 @@ const Home = () => {
       <main className='min-h-screen bg-[#E4E1DC] text-[#202020]'>
         <div className='max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
           <SectionHeading
-            eyebrow='SEARCH RESULTS'
+            eyebrow='অনুসন্ধান'
             title='অনুসন্ধানের ফলাফল'
             icon={FiSearch}
           />
@@ -392,7 +384,7 @@ const Home = () => {
         {/* Featured News */}
         <section className='mb-16'>
           <SectionHeading
-            eyebrow="EDITOR'S CHOICE"
+            eyebrow='সম্পাদকের পছন্দ'
             title='প্রধান সংবাদ'
             icon={FiLayers}
           />
@@ -438,7 +430,7 @@ const Home = () => {
           {/* Latest */}
           <section className='lg:col-span-8'>
             <SectionHeading
-              eyebrow='LATEST UPDATES'
+              eyebrow='সর্বশেষ আপডেট'
               title='সর্বশেষ সংবাদ'
               icon={FiClock}
             />
@@ -464,7 +456,7 @@ const Home = () => {
           <aside className='lg:col-span-4'>
             <div className='sticky top-24'>
               <SectionHeading
-                eyebrow='MOST READ'
+                eyebrow='পাঠকপ্রিয়'
                 title='জনপ্রিয় সংবাদ'
                 icon={FiTrendingUp}
               />
@@ -485,8 +477,8 @@ const Home = () => {
                         key={news._id}
                         className='flex gap-4 py-5 first:pt-0 last:pb-0'
                       >
-                        <span className='font-english text-3xl font-bold text-[#34483C]/35 leading-none'>
-                          {String(index + 1).padStart(2, '0')}
+                        <span className='text-3xl font-bold text-[#34483C]/35 leading-none'>
+                          {toBanglaNumber(String(index + 1).padStart(2, '0'))}
                         </span>
 
                         <div className='flex-1 min-w-0'>
@@ -500,8 +492,8 @@ const Home = () => {
 
               {/* Editorial Box */}
               <div className='mt-7 bg-[#34483C] text-white p-7'>
-                <p className='text-[10px] tracking-[0.2em] uppercase font-english text-white/55 mb-4'>
-                  KHOBORNAMA EDITORIAL
+                <p className='text-[10px] tracking-[0.2em] uppercase text-white/55 mb-4'>
+                  খবরনামা সম্পাদকীয়
                 </p>
 
                 <h3 className='text-xl sm:text-2xl font-bold leading-snug mb-3 text-[#fff]'>
@@ -535,8 +527,8 @@ const Home = () => {
         <section className='mb-14'>
           <div className='bg-[#34483C] text-white p-7 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6'>
             <div>
-              <p className='text-[10px] tracking-[0.2em] uppercase font-english text-white/55 mb-3'>
-                EXPLORE MORE
+              <p className='text-[10px] tracking-[0.2em] uppercase text-white/55 mb-3'>
+                আরও বিভাগ
               </p>
 
               <h2 className='text-2xl sm:text-3xl font-bold mb-2 text-[#fff]'>

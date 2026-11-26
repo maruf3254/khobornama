@@ -12,7 +12,7 @@
   --color-surface: #F8F7F4;
   --color-accent: #34483C;
 
-  --font-bengali: 'Hind Siliguri', sans-serif;
+  --font-bengali: 'Noto Serif Bengali', serif;
   --font-english: 'Inter', sans-serif;
 }
 
@@ -48,7 +48,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Bengali Typography */
+/* Typography */
 h1,
 h2,
 h3,
@@ -73,7 +73,7 @@ h5,
 h6 {
   color: var(--color-primary);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* Links */

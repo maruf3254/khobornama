@@ -109,9 +109,9 @@ const Category = () => {
               <div>
                 <div className='flex items-center gap-2 mb-3'>
                   <span className='w-8 h-[2px] bg-[#34483C]' />
-                  <span className='text-xs font-semibold tracking-[0.18em] uppercase text-[#34483C]'>
+                  {/* <span className='text-xs font-semibold tracking-[0.18em] uppercase text-[#34483C]'>
                     Khobornama / Category
-                  </span>
+                  </span> */}
                 </div>
 
                 <h1 className='text-3xl md:text-5xl font-bold text-[#202020] leading-tight'>

@@ -47,3 +47,171 @@ MAIN FEATURES:
 
 IMPORTANT:
 Maintain consistent branding throughout every page. Do not introduce unrelated colors, excessive gradients, unnecessary animations, or cluttered layouts. Prioritize readability, performance, accessibility, responsiveness, and a premium editorial appearance.
+
+
+
+ {/* Authentication */}
+            {isAuthenticated && (
+              <div className='px-5 py-5 border-t border-[#202020]/10'>
+                <>
+                  <div className='flex items-center gap-3 mb-5'>
+                    <div className='w-11 h-11 rounded-full bg-[#34483C] text-white flex items-center justify-center'>
+                      <FiUser size={19} />
+                    </div>
+
+                    <div className='min-w-0'>
+                      <p className='text-sm font-bold text-[#202020] truncate'>
+                        {user?.name || 'ব্যবহারকারী'}
+                      </p>
+                      <p className='text-xs text-[#202020]/50 truncate mt-1'>
+                        {user?.email || ''}
+                      </p>
+                    </div>
+                  </div>
+
+                  {user?.role === 'advertiser' && (
+                    <Link
+                      to='/advertiser/dashboard'
+                      className='flex items-center gap-3 py-3 text-sm text-[#34483C]'
+                    >
+                      <FiSettings />
+                      বিজ্ঞাপনদাতা প্যানেল
+                    </Link>
+                  )}
+
+                  {user?.role === 'sub-editor' && (
+                    <Link
+                      to='/sub-editor'
+                      className='flex items-center gap-3 py-3 text-sm text-[#34483C]'
+                    >
+                      <FiSettings />
+                      সম্পাদনা প্যানেল
+                    </Link>
+                  )}
+
+                  {isAdmin && (
+                    <Link
+                      to='/admin'
+                      className='flex items-center gap-3 py-3 text-sm text-[#34483C]'
+                    >
+                      <FiSettings />
+                      অ্যাডমিন প্যানেল
+                    </Link>
+                  )}
+
+                  <Link
+                    to='/profile'
+                    className='flex items-center gap-3 py-3 text-sm text-[#202020]'
+                  >
+                    <FiUser />
+                    আমার প্রোফাইল
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className='flex items-center gap-3 py-3 text-sm text-red-600 w-full'
+                  >
+                    <FiLogOut />
+                    লগআউট
+                  </button>
+                </>
+              </div>
+            )}
+
+
+
+            <div className='flex items-center shrink-0'>
+              {isAuthenticated ? (
+                <div className='relative' ref={userRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(prev => !prev)}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup='menu'
+                    className='flex items-center gap-2.5 py-2 px-2.5 hover:bg-[#F8F7F4] transition-colors'
+                  >
+                    <div className='w-9 h-9 flex items-center justify-center bg-[#34483C] text-white rounded-full'>
+                      <FiUser size={17} />
+                    </div>
+
+                    <div className='text-left'>
+                      <p className='text-sm font-semibold text-[#202020] max-w-[120px] truncate'>
+                        {user?.name || 'ব্যবহারকারী'}
+                      </p>
+                      <p className='text-[10px] text-[#202020]/50'>
+                        আমার অ্যাকাউন্ট
+                      </p>
+                    </div>
+
+                    <FiChevronDown
+                      className={`text-[#34483C] transition-transform ${
+                        userMenuOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {userMenuOpen && (
+                    <div
+                      role='menu'
+                      className='absolute right-0 top-full mt-2 w-64 bg-[#F8F7F4] border border-[#202020]/10 shadow-xl z-[70]'
+                    >
+                      <div className='px-5 py-4 border-b border-[#202020]/10'>
+                        <p className='text-sm font-bold truncate'>
+                          {user?.name || 'ব্যবহারকারী'}
+                        </p>
+                        <p className='text-xs text-[#202020]/50 mt-1 truncate'>
+                          {user?.email || ''}
+                        </p>
+                      </div>
+
+                      {user?.role === 'advertiser' && (
+                        <Link
+                          to='/advertiser/dashboard'
+                          className='flex items-center gap-3 px-5 py-3 text-sm hover:bg-[#E4E1DC] transition-colors'
+                        >
+                          <FiSettings />
+                          বিজ্ঞাপনদাতা প্যানেল
+                        </Link>
+                      )}
+
+                      {user?.role === 'sub-editor' && (
+                        <Link
+                          to='/sub-editor'
+                          className='flex items-center gap-3 px-5 py-3 text-sm hover:bg-[#E4E1DC] transition-colors'
+                        >
+                          <FiSettings />
+                          সম্পাদনা প্যানেল
+                        </Link>
+                      )}
+
+                      {isAdmin && (
+                        <Link
+                          to='/admin'
+                          className='flex items-center gap-3 px-5 py-3 text-sm hover:bg-[#E4E1DC] transition-colors'
+                        >
+                          <FiSettings />
+                          অ্যাডমিন প্যানেল
+                        </Link>
+                      )}
+
+                      <Link
+                        to='/profile'
+                        role='menuitem'
+                        className='flex items-center gap-3 px-5 py-3 text-sm hover:bg-[#E4E1DC] transition-colors'
+                      >
+                        <FiUser />
+                        আমার প্রোফাইল
+                      </Link>
+
+                      <button
+                        onClick={handleLogout}
+                        role='menuitem'
+                        className='flex items-center gap-3 px-5 py-3 w-full text-sm text-red-600 border-t border-[#202020]/10 hover:bg-red-50 transition-colors'
+                      >
+                        <FiLogOut />
+                        লগআউট
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
