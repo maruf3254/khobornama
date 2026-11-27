@@ -1502,6 +1502,7 @@ import {
   FiLogOut,
   FiUser
 } from 'react-icons/fi'
+
 import { useAuth } from '../context/AuthContext'
 
 const LOGO = 'https://i.imgur.com/Xkp2QhW.png'
@@ -1540,6 +1541,13 @@ const utilityLinks = [
   { name: 'বিজ্ঞাপন', path: '/advertisement' }
 ]
 
+const roleLabels = {
+  admin: 'অ্যাডমিন',
+  'sub-editor': 'সম্পাদক',
+  advertiser: 'বিজ্ঞাপনদাতা',
+  user: 'ব্যবহারকারী'
+}
+
 const formatDate = () =>
   new Intl.DateTimeFormat('bn-BD', {
     timeZone: 'Asia/Dhaka',
@@ -1553,53 +1561,88 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  const [accountDockOpen, setAccountDockOpen] = useState(false)
+
   const [searchQuery, setSearchQuery] = useState('')
   const [scrolled, setScrolled] = useState(false)
-
-  const [accountDockOpen, setAccountDockOpen] = useState(false)
 
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
 
   const navigate = useNavigate()
   const location = useLocation()
 
+  // Refs
+  const headerRef = useRef(null)
   const moreRef = useRef(null)
   const searchRef = useRef(null)
   const searchButtonRef = useRef(null)
-  const mobileRef = useRef(null)
+  const accountDockRef = useRef(null)
 
   const today = useMemo(formatDate, [])
 
+  // Close navigation menus
   const closeMenus = useCallback(() => {
     setMobileOpen(false)
     setSearchOpen(false)
     setMoreOpen(false)
   }, [])
 
+  // Dashboard path based on user role
+  const dashboardPath = isAdmin
+    ? '/admin'
+    : user?.role === 'sub-editor'
+    ? '/sub-editor'
+    : user?.role === 'advertiser'
+    ? '/advertiser/dashboard'
+    : '/profile'
+
+  const dashboardLabel = isAdmin
+    ? 'অ্যাডমিন প্যানেল'
+    : user?.role === 'sub-editor'
+    ? 'সম্পাদনা প্যানেল'
+    : user?.role === 'advertiser'
+    ? 'বিজ্ঞাপনদাতা প্যানেল'
+    : 'ড্যাশবোর্ড'
+
   // Close menus after route change
   useEffect(() => {
     closeMenus()
+    setAccountDockOpen(false)
   }, [location.pathname, location.search, closeMenus])
 
   // Scroll detection
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 15)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15)
+    }
 
     handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
 
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, {
+      passive: true
+    })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
-  // Outside click and Escape
+  // Outside click and Escape handling
   useEffect(() => {
     const handlePointer = event => {
       const target = event.target
 
+      // Header outside click
+      if (!headerRef.current?.contains(target)) {
+        closeMenus()
+      }
+
+      // More dropdown outside click
       if (!moreRef.current?.contains(target)) {
         setMoreOpen(false)
       }
 
+      // Search outside click
       if (
         !searchRef.current?.contains(target) &&
         !searchButtonRef.current?.contains(target)
@@ -1607,13 +1650,17 @@ const Navbar = () => {
         setSearchOpen(false)
       }
 
-      if (!mobileRef.current?.contains(target)) {
-        setMobileOpen(false)
+      // Account dock outside click
+      if (!accountDockRef.current?.contains(target)) {
+        setAccountDockOpen(false)
       }
     }
 
     const handleEscape = event => {
-      if (event.key === 'Escape') closeMenus()
+      if (event.key === 'Escape') {
+        closeMenus()
+        setAccountDockOpen(false)
+      }
     }
 
     document.addEventListener('pointerdown', handlePointer)
@@ -1625,51 +1672,74 @@ const Navbar = () => {
     }
   }, [closeMenus])
 
-  // Prevent background scroll on mobile
+  // Prevent background scrolling when mobile menu is open
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    if (!mobileOpen) return
+
+    const previousOverflow = document.body.style.overflow
+
+    document.body.style.overflow = 'hidden'
 
     return () => {
-      document.body.style.overflow = ''
+      document.body.style.overflow = previousOverflow
     }
   }, [mobileOpen])
 
+  // Search handler
   const handleSearch = event => {
     event.preventDefault()
 
     const query = searchQuery.trim()
+
     if (!query) return
 
     navigate(`/?search=${encodeURIComponent(query)}`)
+
     setSearchQuery('')
     closeMenus()
   }
 
+  // Toggle search
   const toggleSearch = () => {
     setSearchOpen(prev => !prev)
     setMobileOpen(false)
+    setMoreOpen(false)
   }
 
+  // Toggle mobile menu
   const toggleMobile = () => {
     setMobileOpen(prev => !prev)
     setSearchOpen(false)
+    setMoreOpen(false)
   }
 
+  // Logout handler
+  const handleLogout = async () => {
+    setAccountDockOpen(false)
+    closeMenus()
+
+    try {
+      await logout()
+      navigate('/')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  // Active category detection
   const isMoreActive = moreCategories.some(
     item => location.pathname === `/category/${item.slug}`
   )
 
+  // Main navigation styles
   const primaryClass = ({ isActive }) =>
-    `relative h-full flex items-center whitespace-nowrap text-[16px] font-semibold transition-colors duration-200 ${
+    `relative h-full flex items-center whitespace-nowrap text-[15px] lg:text-[16px] font-semibold transition-colors duration-200 ${
       isActive
         ? 'text-[#34483C] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-[#34483C]'
         : 'text-[#202020]/75 hover:text-[#34483C]'
     }`
 
+  // Category navigation styles
   const categoryClass = ({ isActive }) =>
     `relative h-full flex items-center whitespace-nowrap text-[14px] font-medium transition-colors duration-200 ${
       isActive
@@ -1679,7 +1749,10 @@ const Navbar = () => {
 
   return (
     <>
-      {/* TOP INFORMATION BAR */}
+      {/* =========================================
+          TOP INFORMATION BAR
+      ========================================= */}
+
       <div className='hidden md:block bg-[#202020] text-[#E4E1DC]'>
         <div className='max-w-screen-xl mx-auto px-5 lg:px-8'>
           <div className='h-9 flex items-center justify-between'>
@@ -1703,11 +1776,14 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MASTHEAD */}
+      {/* =========================================
+          MASTHEAD
+      ========================================= */}
+
       <div className='hidden md:block bg-[#E4E1DC]'>
         <div className='max-w-screen-xl mx-auto px-5 lg:px-8'>
           <div className='h-[100px] flex items-center justify-between gap-10'>
-            {/* LOGO */}
+            {/* Logo */}
             <Link to='/' aria-label='খবরনামা হোম' className='shrink-0'>
               <img
                 src={LOGO}
@@ -1716,7 +1792,7 @@ const Navbar = () => {
               />
             </Link>
 
-            {/* SEARCH */}
+            {/* Desktop Search */}
             <form
               onSubmit={handleSearch}
               role='search'
@@ -1747,10 +1823,12 @@ const Navbar = () => {
               </div>
             </form>
 
+            {/* Editorial Text */}
             <div className='hidden lg:block text-right shrink-0'>
               <p className='text-[11px] tracking-[0.15em] text-[#34483C] font-semibold'>
                 সংবাদ ও সম্পাদকীয়
               </p>
+
               <p className='text-[12px] text-[#202020]/55 mt-1'>
                 সত্যের পক্ষে, সংবাদের সঙ্গে
               </p>
@@ -1759,17 +1837,24 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MAIN STICKY HEADER */}
+      {/* =========================================
+          MAIN STICKY HEADER
+      ========================================= */}
+
       <header
+        ref={headerRef}
         className={`sticky top-0 z-50 bg-[#F8F7F4] transition-shadow duration-300 ${
           scrolled ? 'shadow-[0_4px_18px_rgba(32,32,32,0.10)]' : ''
         }`}
       >
-        {/* MOBILE HEADER */}
-        <div ref={mobileRef} className='md:hidden border-b border-[#202020]/10'>
+        {/* =====================================
+            MOBILE HEADER
+        ===================================== */}
+
+        <div className='md:hidden border-b border-[#202020]/10'>
           <div className='max-w-screen-xl mx-auto px-4'>
             <div className='h-[64px] flex items-center justify-between'>
-              <Link to='/' aria-label='খবরনামা হোম'>
+              <Link to='/' aria-label='খবরনামা হোম' onClick={closeMenus}>
                 <img
                   src={LOGO}
                   alt='খবরনামা'
@@ -1778,8 +1863,10 @@ const Navbar = () => {
               </Link>
 
               <div className='flex items-center gap-1'>
+                {/* Search Toggle */}
                 <button
                   ref={searchButtonRef}
+                  type='button'
                   onClick={toggleSearch}
                   aria-label='সংবাদ খুঁজুন'
                   aria-expanded={searchOpen}
@@ -1792,7 +1879,9 @@ const Navbar = () => {
                   <FiSearch size={21} />
                 </button>
 
+                {/* Menu Toggle */}
                 <button
+                  type='button'
                   onClick={toggleMobile}
                   aria-label={mobileOpen ? 'মেনু বন্ধ করুন' : 'মেনু খুলুন'}
                   aria-expanded={mobileOpen}
@@ -1810,7 +1899,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* MOBILE SEARCH */}
+        {/* =====================================
+            MOBILE SEARCH
+        ===================================== */}
+
         {searchOpen && (
           <div
             ref={searchRef}
@@ -1830,21 +1922,24 @@ const Navbar = () => {
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder='আপনার পছন্দের সংবাদ খুঁজুন...'
                   aria-label='সংবাদ খুঁজুন'
-                  className='w-full h-12 pl-11 pr-4 bg-[#E4E1DC]/50 border border-[#202020]/10 text-sm outline-none focus:border-[#34483C]'
+                  className='w-full h-12 pl-11 pr-4 bg-[#E4E1DC]/50 border border-[#202020]/10 text-sm outline-none focus:border-[#34483C] transition-colors'
                 />
               </div>
             </form>
           </div>
         )}
 
-        {/* DESKTOP NAVIGATION */}
+        {/* =====================================
+            DESKTOP NAVIGATION
+        ===================================== */}
+
         <nav
           aria-label='প্রধান মেনু'
           className='hidden md:block border-b border-[#202020]/10'
         >
           <div className='max-w-screen-xl mx-auto px-5 lg:px-8'>
-            <div className='h-[58px] flex items-center gap-7'>
-              {/* COMPACT LOGO */}
+            <div className='h-[58px] flex items-center gap-5 lg:gap-7'>
+              {/* Compact Logo */}
               <Link
                 to='/'
                 aria-label='খবরনামা হোম'
@@ -1863,8 +1958,8 @@ const Navbar = () => {
                 />
               </Link>
 
-              {/* MAIN LINKS */}
-              <div className='flex items-center gap-7 shrink-0 h-full'>
+              {/* Primary Links */}
+              <div className='flex items-center gap-5 lg:gap-7 shrink-0 h-full'>
                 {navLinks.map(item => (
                   <NavLink
                     key={item.path}
@@ -1873,13 +1968,14 @@ const Navbar = () => {
                     className={primaryClass}
                   >
                     {item.icon && <FiTrendingUp size={15} className='mr-1.5' />}
+
                     {item.name}
                   </NavLink>
                 ))}
               </div>
 
-              {/* CATEGORIES */}
-              <div className='flex-1 min-w-0 h-full flex items-center gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
+              {/* Categories */}
+              <div className='flex-1 min-w-0 h-full flex items-center gap-5 lg:gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
                 {mainCategories.map(category => (
                   <NavLink
                     key={category.slug}
@@ -1891,9 +1987,10 @@ const Navbar = () => {
                 ))}
               </div>
 
-              {/* MORE */}
+              {/* More Dropdown */}
               <div className='relative shrink-0 h-full' ref={moreRef}>
                 <button
+                  type='button'
                   onClick={() => setMoreOpen(prev => !prev)}
                   aria-expanded={moreOpen}
                   aria-haspopup='true'
@@ -1922,6 +2019,7 @@ const Navbar = () => {
                       <NavLink
                         key={category.slug}
                         to={`/category/${category.slug}`}
+                        onClick={() => setMoreOpen(false)}
                         className={({ isActive }) =>
                           `block px-4 py-2.5 text-sm transition-colors ${
                             isActive
@@ -1940,25 +2038,29 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {/* MOBILE NAVIGATION */}
+        {/* =====================================
+            MOBILE NAVIGATION
+        ===================================== */}
+
         {mobileOpen && (
           <div
             id='mobile-navigation'
-            className='md:hidden absolute top-full left-0 w-full bg-[#F8F7F4] border-t border-[#202020]/10 shadow-xl max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain'
+            className='md:hidden absolute top-full left-0 right-0 w-full bg-[#F8F7F4] border-t border-[#202020]/10 shadow-xl max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain z-[55]'
           >
-            {/* DATE */}
+            {/* Date */}
             <div className='px-5 py-3 bg-[#202020] text-[#E4E1DC]/80 text-xs flex items-center gap-2'>
               <FiClock size={14} className='text-[#A9B7AA]' />
               {today}
             </div>
 
-            {/* PRIMARY LINKS */}
+            {/* Primary Links */}
             <div className='grid grid-cols-3 border-b border-[#202020]/10'>
               {navLinks.map(item => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   end={item.path === '/'}
+                  onClick={closeMenus}
                   className={({ isActive }) =>
                     `flex items-center justify-center gap-1.5 py-4 text-sm font-semibold border-r last:border-r-0 border-[#202020]/10 transition-colors ${
                       isActive
@@ -1973,14 +2075,15 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* CATEGORIES */}
+            {/* Categories */}
             <div className='p-5'>
               <div className='flex items-center justify-between mb-3'>
                 <h3 className='text-sm font-bold text-[#34483C]'>
                   সংবাদ বিভাগ
                 </h3>
+
                 <span className='text-[11px] text-[#202020]/40'>
-                  {categories.length} বিভাগ
+                  {categories.length.toLocaleString('bn-BD')} বিভাগ
                 </span>
               </div>
 
@@ -1989,6 +2092,7 @@ const Navbar = () => {
                   <NavLink
                     key={category.slug}
                     to={`/category/${category.slug}`}
+                    onClick={closeMenus}
                     className={({ isActive }) =>
                       `py-3 text-sm border-b border-[#202020]/10 transition-colors ${
                         isActive
@@ -2003,7 +2107,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* UTILITY LINKS */}
+            {/* Utility Links */}
             <div className='px-5 py-5 bg-[#E4E1DC]/60 border-t border-[#202020]/10'>
               <p className='text-xs font-bold text-[#34483C] mb-4'>খবরনামা</p>
 
@@ -2012,6 +2116,7 @@ const Navbar = () => {
                   <Link
                     key={item.path}
                     to={item.path}
+                    onClick={closeMenus}
                     className='text-xs text-[#202020]/70 hover:text-[#34483C] transition-colors'
                   >
                     {item.name}
@@ -2028,62 +2133,55 @@ const Navbar = () => {
           </div>
         )}
       </header>
-      {/* USER PANEL STICKY FOOTER - DESKTOP ONLY */}
 
-      {/* MINIMAL ACCOUNT DOCK */}
+      {/* =========================================
+          ACCOUNT DOCK
+      ========================================= */}
+
       {isAuthenticated && (
-        <div className='fixed bottom-4 right-4 md:bottom-5 md:right-6 z-[100]'>
-          {/* MOBILE ACCOUNT MENU */}
+        <div
+          ref={accountDockRef}
+          className='fixed bottom-4 right-4 md:bottom-5 md:right-6 z-[100]'
+        >
+          {/* Mobile Account Menu */}
           {accountDockOpen && (
-            <div className='absolute bottom-14 right-0 w-48 bg-[#F8F7F4] border border-[#202020]/10 shadow-xl rounded-sm overflow-hidden md:hidden'>
+            <div className='absolute bottom-14 right-0 w-52 bg-[#F8F7F4] border border-[#202020]/10 shadow-xl rounded-sm overflow-hidden md:hidden'>
+              {/* User Information */}
               <div className='px-4 py-3 bg-[#202020]'>
                 <p className='text-sm text-white font-semibold truncate'>
                   {user?.name || 'ব্যবহারকারী'}
                 </p>
+
                 <p className='text-[10px] text-white/50 mt-1'>
-                  {user?.role || 'User'}
+                  {roleLabels[user?.role] || 'ব্যবহারকারী'}
                 </p>
               </div>
 
+              {/* Profile */}
               <Link
                 to='/profile'
                 onClick={() => setAccountDockOpen(false)}
-                className='flex items-center gap-3 px-4 py-3 text-sm text-[#202020] hover:bg-[#E4E1DC]'
+                className='flex items-center gap-3 px-4 py-3 text-sm text-[#202020] hover:bg-[#E4E1DC] transition-colors'
               >
                 <FiUser size={16} />
                 আমার প্রোফাইল
               </Link>
 
+              {/* Dashboard */}
               <Link
-                to={
-                  isAdmin
-                    ? '/admin'
-                    : user?.role === 'sub-editor'
-                    ? '/sub-editor'
-                    : user?.role === 'advertiser'
-                    ? '/advertiser/dashboard'
-                    : '/profile'
-                }
+                to={dashboardPath}
                 onClick={() => setAccountDockOpen(false)}
-                className='flex items-center gap-3 px-4 py-3 text-sm text-[#34483C] hover:bg-[#E4E1DC]'
+                className='flex items-center gap-3 px-4 py-3 text-sm text-[#34483C] hover:bg-[#E4E1DC] transition-colors'
               >
                 <FiSettings size={16} />
-                {isAdmin
-                  ? 'অ্যাডমিন প্যানেল'
-                  : user?.role === 'sub-editor'
-                  ? 'সম্পাদনা প্যানেল'
-                  : user?.role === 'advertiser'
-                  ? 'বিজ্ঞাপনদাতা প্যানেল'
-                  : 'ড্যাশবোর্ড'}
+                {dashboardLabel}
               </Link>
 
+              {/* Logout */}
               <button
-                onClick={() => {
-                  logout()
-                  setAccountDockOpen(false)
-                  navigate('/')
-                }}
-                className='flex items-center gap-3 px-4 py-3 w-full text-sm text-red-600 border-t border-[#202020]/10 hover:bg-red-50'
+                type='button'
+                onClick={handleLogout}
+                className='flex items-center gap-3 px-4 py-3 w-full text-sm text-red-600 border-t border-[#202020]/10 hover:bg-red-50 transition-colors'
               >
                 <FiLogOut size={16} />
                 লগআউট
@@ -2091,7 +2189,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* DESKTOP COMPACT DOCK */}
+          {/* Desktop Account Dock */}
           <div className='hidden md:flex items-center gap-1 p-1.5 bg-[#202020]/95 backdrop-blur-md border border-white/10 shadow-lg rounded-full'>
             <Link
               to='/profile'
@@ -2102,16 +2200,8 @@ const Navbar = () => {
             </Link>
 
             <Link
-              to={
-                isAdmin
-                  ? '/admin'
-                  : user?.role === 'sub-editor'
-                  ? '/sub-editor'
-                  : user?.role === 'advertiser'
-                  ? '/advertiser/dashboard'
-                  : '/profile'
-              }
-              title='ড্যাশবোর্ড'
+              to={dashboardPath}
+              title={dashboardLabel}
               className='w-9 h-9 flex items-center justify-center rounded-full text-white/70 hover:bg-[#34483C] hover:text-white transition-colors'
             >
               <FiSettings size={17} />
@@ -2120,10 +2210,8 @@ const Navbar = () => {
             <div className='w-px h-5 bg-white/15 mx-0.5' />
 
             <button
-              onClick={() => {
-                logout()
-                navigate('/')
-              }}
+              type='button'
+              onClick={handleLogout}
               title='লগআউট'
               className='w-9 h-9 flex items-center justify-center rounded-full text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-colors'
             >
@@ -2131,8 +2219,9 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* MOBILE PROFILE BUTTON */}
+          {/* Mobile Profile Button */}
           <button
+            type='button'
             onClick={() => setAccountDockOpen(prev => !prev)}
             aria-label='অ্যাকাউন্ট মেনু'
             aria-expanded={accountDockOpen}

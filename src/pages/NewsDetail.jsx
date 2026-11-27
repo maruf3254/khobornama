@@ -851,7 +851,7 @@ const NewsDetail = () => {
 
                 <span className='flex items-center gap-2'>
                   <FiEye className='text-[#34483C]' />
-                  {news.views || 0} বার পঠিত
+                  {news.views?.toLocaleString('bn-BD') || '০'} বার পঠিত
                 </span>
               </div>
             </div>
@@ -875,10 +875,10 @@ const NewsDetail = () => {
           )}
 
           {/* লাইক, সংরক্ষণ ও শেয়ার */}
-          <div className='flex flex-wrap items-center justify-between gap-4 py-5 mt-2 border-b border-[#202020]/15'>
-            <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
-              {/* লাইক */}
-              <button
+          {/* <div className='flex flex-wrap items-center justify-between gap-4 py-5 mt-2 border-b border-[#202020]/15'>
+            <div className='flex flex-wrap items-center gap-2 sm:gap-3'> */}
+          {/* লাইক */}
+          {/* <button
                 onClick={handleLike}
                 aria-label='লাইক দিন'
                 aria-pressed={isLiked}
@@ -890,10 +890,10 @@ const NewsDetail = () => {
               >
                 <FiHeart className={isLiked ? 'fill-current' : ''} />
                 {likesCount}
-              </button>
+              </button> */}
 
-              {/* সংরক্ষণ */}
-              <button
+          {/* সংরক্ষণ */}
+          {/* <button
                 onClick={handleFavorite}
                 aria-label='সংবাদ সংরক্ষণ করুন'
                 aria-pressed={isFavorited}
@@ -906,17 +906,17 @@ const NewsDetail = () => {
                 {isFavorited ? <FiCheck /> : <FiBookmark />}
                 {isFavorited ? 'সংরক্ষিত' : 'সংরক্ষণ'}
               </button>
-            </div>
+            </div> */}
 
-            {/* শেয়ার */}
-            <button
+          {/* শেয়ার */}
+          {/* <button
               onClick={handleShare}
               className='inline-flex items-center gap-2 px-4 py-2.5 bg-[#202020] text-white text-sm font-semibold hover:bg-[#34483C] transition-colors'
             >
               <FiShare2 />
               শেয়ার করুন
             </button>
-          </div>
+          </div> */}
 
           {/* সংবাদ বিবরণ */}
           <div className='mt-9 sm:mt-12'>
